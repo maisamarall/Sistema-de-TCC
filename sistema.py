@@ -1,4 +1,6 @@
-# Função cadastrar orientador
+#funções
+orientadores = {}
+alunos = []
 
 def cadastrar_orientador(orientadores):
     orientador = input("Informe o nome do orientador do trabalho: ")
@@ -11,7 +13,6 @@ def cadastrar_orientador(orientadores):
 
     return orientadores
 
-# Função cadastrar aluno
 def cadastrar_aluno():
     nome = input("Informe o nome do aluno: ")
     matricula = input("Informe o número da matrícula: ")
@@ -39,34 +40,79 @@ def cadastrar_aluno():
 
     return aluno
 
-# Dicionarios
 orientadores = {}
 alunos = []
 
-# Cadastrar orientadores
-print("\nCadastro de orientadores")
-while True:
-    cadastrar_orientador(orientadores)
 
-    continuar = input("Deseja cadastrar outro orientador? (s/n): ")
-    if continuar.lower() != 's':
+
+#Menu
+while True:
+    opcao = input("""
+---------------------------------------------------------
+Escolha uma opção ou digite 'q' para encerrar o programa:
+
+1 - Cadastrar orientadores.
+2 - Cadastrar alunos.
+3 - Realizar operações.
+---------------------------------------------------------
+
+""")
+    if opcao.lower() == "q":
+        print("Encerrando o programa...\n")
         break
 
-# Parte 2: Cadastrar alunos
-print("\nCadastro de alunos")
-while True:
-    aluno = cadastrar_aluno()
-    alunos.append(aluno)
+    elif opcao == "1":
+        print("Cadastrar orientadores.\n")
+        cadastrar_orientador(orientadores)
+    elif opcao == "2":
+        print("Cadastrar alunos.\n")
+        aluno = cadastrar_aluno()
+        alunos.append(aluno)
+    elif opcao == "3":
+        print("Realizar operações")
+        while True: 
+            opcao_funcionalidades = int(input("""\n
+------------------------------------------
+Escolha uma funcionalidade:
 
-    continuar = input("Deseja cadastrar outro aluno? (s/n): ")
-    if continuar.lower() != 's':
-        break
+1 - Registrar nova entrega.
+2 - Registrar nota.
+3 - Listar alunos por orientador.
+4 - Listar versões entregues por aluno.
+5 - Listar pendências de avaliação.
+6 - Gerar relatório do orientador.
+7 - Voltar ao menu principal.
+------------------------------------------
+"""))
+            
+            if opcao.lower() == "q":
+                print("Encerrando o programa...\n")
+                break
+            elif opcao_funcionalidades == 1:
+                print("Registrar nova entrega.")
+                # colocar a funcao aqui
+            elif opcao_funcionalidades == 2:
+                print("Registrar nota.")
+                # colocar a funcao aqui
+            elif opcao_funcionalidades == 3:
+                print("Listar alunos por orientador.")
+                # colocar a funcao aqui
+            elif opcao_funcionalidades == 4:
+                print("Listar versões entregues por aluno.")
+                # colocar a funcao aqui
+            elif opcao_funcionalidades == 5:
+                print("Listar pendências de avaliação.")
+                # colocar a funcao aqui
+            elif opcao_funcionalidades == 6:
+                print("Gerar relatório do orientador.")
+                # colocar a funcao aqui
+            elif opcao_funcionalidades == 7:
+                print("Voltar ao menu principal.")
+                break
+            else: 
+                print("Digite uma opção válida...")
 
-# Mostrar resultados
-print("\nOrientadores e seus alunos:")
-for orientador, lista_alunos in orientadores.items():
-    print({'nome': orientador, 'alunos': lista_alunos})
+    else:
+        print("Digite uma opção válida\n")
 
-print("\nAlunos cadastrados:")
-for aluno in alunos:
-    print(aluno)
+
