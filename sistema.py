@@ -65,9 +65,32 @@ def cadastrar_aluno(orientadores):
 
     return aluno
 
-orientadores = {}
-alunos = []
+def listar_aluno_por_orientador(orientadores):
+    print("\nAlunos por orientador:")
+    for orientador, lista_alunos in orientadores.items():
+        print(f"orientador: {orientador}")
+        for aluno in lista_alunos:
+            print(f" - {aluno}")
 
+def listar_entregas_por_aluno(alunos):
+    print("\nVersões entregues por aluno:")
+    for aluno in alunos:
+        print(f"\nAluno: {aluno['nome']}")
+        for entrega in aluno['entregas']:
+            versao, data, _ = entrega
+            print(f" - Versão: {versao}, Data de entrega: {data}")
+
+def listar_pendencias_avaliacao(alunos):
+    print("\nAlunos com entregas não avaliadas:")
+    for aluno in alunos:
+        pendente = False
+        for entrega in aluno['entregas']:
+            _, _, nota = entrega
+            if nota is None:
+                pendente = True
+                break
+        if pendente:
+            print(f" - {aluno['nome']}")
 
 #Menu
 while True:
@@ -110,7 +133,7 @@ Escolha uma funcionalidade:
 ------------------------------------------
 """))
             
-            if opcao.lower() == "q":
+            if opcao_funcionalidades.lower() == "q":
                 print("Encerrando o programa...\n")
                 break
             elif opcao_funcionalidades == 1:
@@ -121,13 +144,13 @@ Escolha uma funcionalidade:
                 # colocar a funcao aqui
             elif opcao_funcionalidades == 3:
                 print("Listar alunos por orientador.")
-                # colocar a funcao aqui
+                listar_aluno_por_orientador(orientadores)
             elif opcao_funcionalidades == 4:
                 print("Listar versões entregues por aluno.")
-                # colocar a funcao aqui
+                listar_entregas_por_aluno(alunos)
             elif opcao_funcionalidades == 5:
                 print("Listar pendências de avaliação.")
-                # colocar a funcao aqui
+                listar_pendencias_avaliacao(alunos)
             elif opcao_funcionalidades == 6:
                 print("Gerar relatório do orientador.")
                 # colocar a funcao aqui
