@@ -1,29 +1,54 @@
+from datetime import datetime
+
 #funções
 orientadores = {}
 alunos = []
 
-def cadastrar_orientador(orientadores):
+def cadastrar_orientador(orientadores, alunos):
     orientador = input("Informe o nome do orientador do trabalho: ")
+
+    if orientador not in orientadores:
+        orientadores[orientador] = []
+
     aluno = input("Informe o nome do aluno a ser orientado no trabalho: ")
 
-    if orientador in orientadores:
-        orientadores[orientador].append(aluno)
-    else:
-        orientadores[orientador] = [aluno]
+    for estudante in alunos:
+        if estudante['nome'].lower() == aluno.lower():
+            print("Este aluno já foi cadastrado anteriormente...")
+            return orientadores
+        
+    orientadores[orientador].append(aluno)
+
+    # if orientador in orientadores:
+    #     orientadores[orientador].append(aluno)
+    # else:
+    #     orientadores[orientador] = [aluno]
 
     return orientadores
 
-def cadastrar_aluno():
+def cadastrar_aluno(orientadores):
     nome = input("Informe o nome do aluno: ")
     matricula = input("Informe o número da matrícula: ")
     orientador = input("Informe o nome do orientador: ")
 
+    if orientador not in orientadores:
+        print("Orientador não encontrado. Cadastre o orientador primeiro.")
+        return None
+
     entregas = []
+
     while True:
         versao = input("Informe a versão da entrega (ex: v1, v2): ")
-        data_entrega = input("Informe a data da entrega (formato YYYY-MM-DD): ")
-        nota_input = input("Informe a nota (ou pressione Enter se ainda não foi avaliado): ")
 
+        while True:
+            data_entrega = input("Informe a data da entrega (formato YYYY-MM-DD): ")
+            try:
+                datetime.strptime(data_entrega, "%Y-%m-%d")
+                break
+            except ValueError:
+                print("Data inválida. Use o formato YYYY-MM-DD")
+                
+        nota_input = input("Informe a nota (ou pressione Enter se ainda não foi avaliado): ")
         nota = float(nota_input) if nota_input else None
         entregas.append((versao, data_entrega, nota))
 
@@ -44,7 +69,6 @@ orientadores = {}
 alunos = []
 
 
-
 #Menu
 while True:
     opcao = input("""
@@ -63,11 +87,12 @@ Escolha uma opção ou digite 'q' para encerrar o programa:
 
     elif opcao == "1":
         print("Cadastrar orientadores.\n")
-        cadastrar_orientador(orientadores)
+        cadastrar_orientador(orientadores, alunos)
     elif opcao == "2":
         print("Cadastrar alunos.\n")
-        aluno = cadastrar_aluno()
-        alunos.append(aluno)
+        aluno = cadastrar_aluno(orientadores)
+        if aluno:
+            alunos.append(aluno)
     elif opcao == "3":
         print("Realizar operações")
         while True: 
