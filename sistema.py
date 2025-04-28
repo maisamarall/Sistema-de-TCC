@@ -67,6 +67,43 @@ def registrar_entregas(alunos):
 orientadores = {}
 alunos = []
 
+# Registrar nota
+def registrar_nota(alunos):
+    while True:
+        print(60*"=")
+        nome_aluno = input("Nome do aluno: ")
+        versao = input("Número da versão do TCC: ")
+        nota = float(input("Nota a ser atribuída (0 a 10): "))
+
+        aluno_encontrado = None
+        for aluno in alunos:
+            if aluno["nome"].lower() == nome_aluno.lower():
+                aluno_encontrado = aluno
+                break
+
+        if aluno_encontrado:
+            encontrou_versao = False
+            for i, (versao_num, data, nota_atual) in enumerate(aluno_encontrado["entregas"]):
+                if versao_num.lower() == versao.lower():
+                    aluno_encontrado["entregas"][i] = (versao_num, data, nota)
+                    encontrou_versao = True
+                    print(f"\nNota atribuída com sucesso á versão {versao} de {nome_aluno}.\n")
+                    print(aluno_encontrado["entregas"])
+                    break
+
+            if not encontrou_versao:
+              print(f"Versão {versao} não encontrada para o aluno {nome_aluno}.\n")
+        else:
+            print(f"Aluno {nome_aluno} não encontrado.\n")
+
+        print(60*"=")
+        continuar = input("Deseja continuar atribuindo nota? (S/N): ").upper()
+        if continuar != "S":
+            print(60*"=")
+            print("Saindo do sistema de atribuição de notas.")
+            print(60*"=")
+            break
+
 #Menu
 while True:
     opcao = input("""
@@ -115,7 +152,7 @@ Escolha uma funcionalidade:
                 alunos = registrar_entregas(alunos)
             elif opcao_funcionalidades == 2:
                 print("Registrar nota.")
-                # colocar a funcao aqui
+                registrar_nota(alunos)
             elif opcao_funcionalidades == 3:
                 print("Listar alunos por orientador.")
                 # colocar a funcao aqui
