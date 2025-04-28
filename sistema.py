@@ -112,7 +112,7 @@ Escolha uma funcionalidade:
                 break
             elif opcao_funcionalidades == 1:
                 print("Registrar nova entrega.")
-                alunos = registrar_entrega(alunos)
+                alunos = registrar_entregas(alunos)
             elif opcao_funcionalidades == 2:
                 print("Registrar nota.")
                 # colocar a funcao aqui
