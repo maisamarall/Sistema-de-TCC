@@ -70,7 +70,7 @@ alunos = []
 # Registrar nota
 def registrar_nota(alunos):
     while True:
-        print(60*"=")
+        print("--------------------------------------------------")
         nome_aluno = input("Nome do aluno: ")
         versao = input("Número da versão do TCC: ")
         nota = float(input("Nota a ser atribuída (0 a 10): "))
@@ -96,13 +96,83 @@ def registrar_nota(alunos):
         else:
             print(f"Aluno {nome_aluno} não encontrado.\n")
 
-        print(60*"=")
+        print("--------------------------------------------------")
         continuar = input("Deseja continuar atribuindo nota? (S/N): ").upper()
         if continuar != "S":
-            print(60*"=")
+            print("--------------------------------------------------")
             print("Saindo do sistema de atribuição de notas.")
-            print(60*"=")
+            print("--------------------------------------------------")
             break
+
+def relatorio_orientador(alunos):
+  while True:
+    print("--------------------------------------------------")
+    nome_orientador = input("Nome do orientador: ")
+    opcao_funcionalidade = int(input("""\n
+--------------------------------------------------
+Escolha uma das funcionalidades:
+
+1 - Média das notas por aluno.
+2 - Média geral.
+    
+--------------------------------------------------
+"""))
+
+    orientador_encontrado = False
+    for aluno in alunos:
+      if aluno["orientador"].lower() == nome_orientador.lower():
+        orientador_encontrado = True
+        break
+
+    if orientador_encontrado:
+      if opcao_funcionalidade == 1:
+        print("Média das notas por aluno\n")
+        
+        for aluno in alunos:
+          if aluno["orientador"].lower() == nome_orientador.lower():
+            entregas = aluno["entregas"]
+            notas_validas = [nota for versao, data, nota in entregas if nota is not None]
+            
+            if notas_validas:
+              media = sum(notas_validas) / len(notas_validas)
+              print(f"Aluno: {aluno['nome']} - Média das notas: {media:.2f}")
+            
+            else:
+              print(f"Aluno: {aluno['nome']} - Nenhuma nota avaliada.")
+
+      elif opcao_funcionalidade == 2:
+        print("Média geral.\n")
+        todas_notas = []
+        for aluno in alunos:
+          if aluno["orientador"].lower() == nome_orientador.lower():
+              entregas = aluno["entregas"]
+              notas_validas = [nota for versao, data, nota in entregas if nota is not None]
+
+              if notas_validas:
+                  todas_notas.append(notas_validas[-1])
+
+        if todas_notas:
+          media_geral = sum(todas_notas) / len(todas_notas)  
+          print(f"Média geral dos alunos orientados por {nome_orientador}: {media_geral:.2f}")
+
+        else:
+          print("Nenhuma nota encontrada")        
+
+      else:
+        print("\nFuncionalidade inválida.")
+
+    else:
+      print(f"\nOrientador {nome_orientador} não encontrado.\n")
+
+    print("-----------------------------------------------")
+    continuar = input("\nDeseja continuar o processo? (S/N): ").upper()
+    if continuar != "S":
+        print("--------------------------------------------------")
+        print("Saindo do sistema de relatório do orientador.")
+        print("--------------------------------------------------")
+
+        break
+
 
 #Menu
 while True:
