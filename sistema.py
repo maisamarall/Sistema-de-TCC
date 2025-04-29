@@ -1,29 +1,54 @@
+from datetime import datetime
+
 #funções
 orientadores = {}
 alunos = []
 
-def cadastrar_orientador(orientadores):
+def cadastrar_orientador(orientadores, alunos):
     orientador = input("Informe o nome do orientador do trabalho: ")
+
+    if orientador not in orientadores:
+        orientadores[orientador] = []
+
     aluno = input("Informe o nome do aluno a ser orientado no trabalho: ")
 
-    if orientador in orientadores:
-        orientadores[orientador].append(aluno)
-    else:
-        orientadores[orientador] = [aluno]
+    for estudante in alunos:
+        if estudante['nome'].lower() == aluno.lower():
+            print("Este aluno já foi cadastrado anteriormente...")
+            return orientadores
+        
+    orientadores[orientador].append(aluno)
+
+    # if orientador in orientadores:
+    #     orientadores[orientador].append(aluno)
+    # else:
+    #     orientadores[orientador] = [aluno]
 
     return orientadores
 
-def cadastrar_aluno():
+def cadastrar_aluno(orientadores):
     nome = input("Informe o nome do aluno: ")
     matricula = input("Informe o número da matrícula: ")
     orientador = input("Informe o nome do orientador: ")
 
+    if orientador not in orientadores:
+        print("Orientador não encontrado. Cadastre o orientador primeiro.")
+        return None
+
     entregas = []
+
     while True:
         versao = input("Informe a versão da entrega (ex: v1, v2): ")
-        data_entrega = input("Informe a data da entrega (formato YYYY-MM-DD): ")
-        nota_input = input("Informe a nota (ou pressione Enter se ainda não foi avaliado): ")
 
+        while True:
+            data_entrega = input("Informe a data da entrega (formato YYYY-MM-DD): ")
+            try:
+                datetime.strptime(data_entrega, "%Y-%m-%d")
+                break
+            except ValueError:
+                print("Data inválida. Use o formato YYYY-MM-DD")
+                
+        nota_input = input("Informe a nota (ou pressione Enter se ainda não foi avaliado): ")
         nota = float(nota_input) if nota_input else None
         entregas.append((versao, data_entrega, nota))
 
@@ -39,6 +64,81 @@ def cadastrar_aluno():
     }
 
     return aluno
+
+def listar_aluno_por_orientador(orientadores):
+    print("\n------------------------------------------\nAlunos por orientador:")
+    
+    while True:
+        nomeOrientador = input("Digite o nome do Orientador: ")
+        encontrado = False
+
+        for orientador, lista_alunos in orientadores.items():
+            if orientador.lower() == nomeOrientador.lower():
+                print(f"orientador: {orientador}")
+                for aluno in lista_alunos:
+                    print(f" - {aluno}")
+                encontrado = True
+                break
+            
+        if not encontrado:
+            print(f"Aluno {nomeOrientador} não encontrado.\n")
+            
+        resposta = str(input("\nDeseja continuar? (S/N)"))
+        if resposta.upper() != "S":
+            break
+
+def listar_entregas_por_aluno(alunos):
+    print("\n------------------------------------------\nVersões entregues por aluno:")
+
+    while True:
+        nomeAluno = input("Digite o nome do aluno: ")
+        encontrado = False
+
+        for aluno in alunos:
+            if aluno["nome"].lower() == nomeAluno.lower():
+                print(f"\nAluno: {aluno['nome']}")
+                for entrega in aluno['entregas']:
+                    versao, data, _ = entrega
+                    print(f" - Versão: {versao}\n - Data de entrega: {data}")
+                encontrado = True
+                break
+        if not encontrado:
+            print(f"Aluno {nomeAluno} não encontrado.\n")
+        
+        resposta = str(input("\nDeseja continuar? (S/N)"))
+        if resposta.upper() != "S":
+            break
+
+def listar_pendencias_avaliacao(alunos):
+    print("\n------------------------------------------\nAlunos com entregas não avaliadas:")
+
+    while True:
+        nomeAluno = input("Digite o nome do aluno: ")
+        encontrado = False
+        pendente = False
+
+        for aluno in alunos:
+            if aluno["nome"].lower() == nomeAluno.lower():
+                encontrado = True
+                for entrega in aluno['entregas']:
+                    _, _, nota = entrega
+                    if nota is None:
+                        pendente = True
+                        break
+
+                if pendente:
+                    print(f" - {aluno['nome']} possui entregas pendentes.")
+                else:
+                    print(f" - {aluno['nome']} não possui entregas pendentes.")
+                break 
+
+        if not encontrado:
+            print(f"Aluno {nomeAluno} não encontrado.\n")
+
+        resposta = str(input("\nDeseja continuar? (S/N)"))
+        if resposta.upper() != "S":
+            break
+
 
    #registrar versões
 def registrar_entregas(alunos):
@@ -63,9 +163,6 @@ def registrar_entregas(alunos):
     aluno_encontrado["entregas"].append(nova_entrega)
     print(f"Versão v{num_versao} registrada com sucesso para o aluno {aluno_encontrado['nome']} em {data_entrega}.")
     return alunos
-
-orientadores = {}
-alunos = []
 
 # Registrar nota
 def registrar_nota(alunos):
@@ -192,15 +289,16 @@ Escolha uma opção ou digite 'q' para encerrar o programa:
 
     elif opcao == "1":
         print("Cadastrar orientadores.\n")
-        cadastrar_orientador(orientadores)
+        cadastrar_orientador(orientadores, alunos)
     elif opcao == "2":
         print("Cadastrar alunos.\n")
-        aluno = cadastrar_aluno()
-        alunos.append(aluno)
+        aluno = cadastrar_aluno(orientadores)
+        if aluno:
+            alunos.append(aluno)
     elif opcao == "3":
         print("Realizar operações")
         while True: 
-            opcao_funcionalidades = int(input("""\n
+            opcao_funcionalidades = input("""\n
 ------------------------------------------
 Escolha uma funcionalidade:
 
@@ -212,35 +310,35 @@ Escolha uma funcionalidade:
 6 - Gerar relatório do orientador.
 7 - Voltar ao menu principal.
 ------------------------------------------
-"""))
+""")
             
-            if str (opcao_funcionalidades).lower() == "q": #corrigindo.. Comparar com a entrada do menu inicial
+            if str (opcao_funcionalidades).lower() == "q":
                 print("Encerrando o programa...\n")
                 break
-            elif opcao_funcionalidades == 1:
+            elif opcao_funcionalidades == "1":
                 print("Registrar nova entrega.")
                 alunos = registrar_entregas(alunos)
-            elif opcao_funcionalidades == 2:
+            elif opcao_funcionalidades == "2":
                 print("Registrar nota.")
                 registrar_nota(alunos)
-            elif opcao_funcionalidades == 3:
+            elif opcao_funcionalidades == "3":
                 print("Listar alunos por orientador.")
-                # colocar a funcao aqui
-            elif opcao_funcionalidades == 4:
+                listar_aluno_por_orientador(orientadores)
+            elif opcao_funcionalidades == "4":
                 print("Listar versões entregues por aluno.")
-                # colocar a funcao aqui
-            elif opcao_funcionalidades == 5:
+                listar_entregas_por_aluno(alunos)
+            elif opcao_funcionalidades == "5":
                 print("Listar pendências de avaliação.")
-                # colocar a funcao aqui
-            elif opcao_funcionalidades == 6:
+                listar_pendencias_avaliacao(alunos)
+            elif opcao_funcionalidades == "6":
                 print("Gerar relatório do orientador.")
-                # colocar a funcao aqui
-            elif opcao_funcionalidades == 7:
+                relatorio_orientador(alunos)
+            elif opcao_funcionalidades == "7":
                 print("Voltar ao menu principal.")
                 break
             else: 
                 print("Digite uma opção válida...")
 
-    else:
-        print("Digite uma opção válida\n")
+        else:
+            print("Digite uma opção válida\n")
 
